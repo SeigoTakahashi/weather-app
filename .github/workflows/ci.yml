@@ -9,13 +9,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 0. .envファイルが存在しない場合のために、ダミーの.envファイルを作成
+      - name: Create dummy .env
+        run: touch .env
+
       # 1. ビルドチェック (Dockerfileに不備がないか)
       - name: Build Docker Image
         run: docker compose build app
 
       # 2. 静的解析 (Lint)
       - name: Run Lint
-        run: docker compose run --rm app golangci-lint run ./...
+        run: docker compose run --rm app golangci-lint run
 
       # 3. テスト実行 (TDDの成果確認)
       - name: Run Tests
