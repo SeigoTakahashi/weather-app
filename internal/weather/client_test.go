@@ -1,7 +1,6 @@
 package weather
 
 import (
-	"encoding/json"
 	"testing"
 )
 
@@ -33,8 +32,7 @@ func TestUnmarshalWeather(t *testing.T) {
     // テストケースの実行
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var weather WeatherResponse
-			err := json.Unmarshal(tt.data, &weather)
+			_, err := ParseWeatherResponse(tt.data)
 			
 			// エラーの有無が期待通りかチェック
             if (err != nil) != tt.wantError {
