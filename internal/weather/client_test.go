@@ -32,11 +32,11 @@ func TestUnmarshalWeather(t *testing.T) {
     // テストケースの実行
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := ParseWeatherResponse(tt.data)
+			weatherResult := ParseWeatherResponse(tt.data)
 			
 			// エラーの有無が期待通りかチェック
-            if (err != nil) != tt.wantError {
-                t.Errorf("Unmarshal() error = %v, wantErr %v", err, tt.wantError)
+            if (weatherResult.Err != nil) != tt.wantError {
+                t.Errorf("Unmarshal() error = %v, wantErr %v", weatherResult.Err, tt.wantError)
             }
 		})
 	}   
