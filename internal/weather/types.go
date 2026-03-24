@@ -15,3 +15,8 @@ type WeatherResponse struct {
 		Speed float64 `json:"speed"`
 	} `json:"wind"`
 }
+
+type WeatherResult struct {
+	Response WeatherResponse
+	Err error
+}
