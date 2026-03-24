@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      # 開発時はマルチステージの最初（builder）で止めて、テスト等を行えるようにする
+      target: builder
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+    # 開発時に便利な golangci-lint を含める設定
+    environment:
+      - GO111MODULE=on
+      - GOFLAGS=-buildvcs=false
