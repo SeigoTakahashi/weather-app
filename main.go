@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"weather-app/infra"
+	"weather-app/internal/notifier"
 	"weather-app/internal/service"
 	"weather-app/internal/weather"
 )
@@ -55,18 +57,41 @@ func main() {
 			continue
 		}
 
-		// 天気情報の表示
-		fmt.Printf("----- %sの天気情報 -----\n", res.Response.Name)
-		fmt.Printf("天候: %s\n", service.GetWeatherMessage(res.Response.Weather[0].Id))
-		fmt.Printf("気温：%.1f度\n", res.Response.Main.Temp)
-		fmt.Printf("体感気温：%.1f度\n", res.Response.Main.FeelsLike)
-		fmt.Printf("湿度：%d%%\n", res.Response.Main.Humidity)
-		fmt.Printf("風速：%.1fm/s\n", res.Response.Wind.Speed)
+		
+
+		// 天気情報を一つの文字列変数にまとめる
+		var b strings.Builder
+
+		// 基本情報の書き込み
+		fmt.Fprintf(&b, "----- *%sの天気情報* -----\n", res.Response.Name)
+		fmt.Fprintf(&b, "*天候*: %s\n", service.GetWeatherMessage(res.Response.Weather[0].Id))
+		fmt.Fprintf(&b, "*気温*: %.1f度\n", res.Response.Main.Temp)
+		fmt.Fprintf(&b, "*体感気温*: %.1f度\n", res.Response.Main.FeelsLike)
+		fmt.Fprintf(&b, "*湿度*: %d%%\n", res.Response.Main.Humidity)
+		fmt.Fprintf(&b, "*風速*: %.1fm/s\n", res.Response.Wind.Speed)
+
+		// アドバイス部分
 		advices := service.GetPracticalAdvice(&res.Response)
-		fmt.Println("生活に役立つアドバイス:")
+		b.WriteString("*生活に役立つアドバイス*:\n")
 		for _, advice := range advices {
-			fmt.Printf("- %s\n", advice)
+			fmt.Fprintf(&b, "- %s\n", advice)
 		}
+
+		// 最終的な文字列を取得
+		message := b.String()
+
+		// 画像URLの生成
+		iconCode := res.Response.Weather[0].Icon
+		iconUrl := fmt.Sprintf("https://openweathermap.org/payload/api/media/file/%s@2x.png", iconCode)
+
+		// Slackに送信
+		err := notifier.PushMessageToSlack(os.Getenv("SLACK_BOT_USER_TOKEN"), "C0AL88UBYF7", message, iconUrl)
+		if err != nil {
+			fmt.Printf("Slackへの送信に失敗: %v\n", err)
+		} else {
+			fmt.Printf("%sの天気情報をSlackに送信しました。\n", res.Response.Name)
+		}
+
 	}
 
 }
