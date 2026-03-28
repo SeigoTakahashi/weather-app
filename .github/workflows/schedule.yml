@@ -1,0 +1,18 @@
+name: Daily Weather Report
+on:
+  schedule:
+    - cron: "45 20 * * *" # 日本時間 05:45 毎日実行
+  workflow_dispatch: # ボタンでいつでも実行可能
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and Run
+        env:
+          SLACK_BOT_USER_TOKEN: ${{ secrets.SLACK_BOT_USER_TOKEN }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: |
+          docker build -t weather-app .
+          docker run --rm -e SLACK_BOT_USER_TOKEN -e WEATHER_API_KEY weather-app

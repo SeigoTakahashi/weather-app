@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Slackにメッセージを送信する関数
 func PushMessageToSlack(token string, channel string, message string, image_url string) error {
 	url := "https://slack.com/api/chat.postMessage"
 
