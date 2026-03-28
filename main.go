@@ -82,7 +82,7 @@ func main() {
 
 		// 画像URLの生成
 		iconCode := res.Response.Weather[0].Icon
-		iconUrl := fmt.Sprintf("https://openweathermap.org/payload/api/media/file/%s@2x.png", iconCode)
+		iconUrl := fmt.Sprintf("https://openweathermap.org/img/wn/%s@2x.png", iconCode)
 
 		// Slackに送信
 		err := notifier.PushMessageToSlack(os.Getenv("SLACK_BOT_USER_TOKEN"), "C0AL88UBYF7", message, iconUrl)
