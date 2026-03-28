@@ -53,6 +53,7 @@ func GetPracticalAdvice(w *weather.WeatherResponse) []string {
     return advices
 }
 
+// 天候IDに基づいて天気の説明を返す
 func GetWeatherMessage(id int) string {
 	// IDをキーにしたマップ定義
 	weatherMap := map[int]WeatherDetail{
